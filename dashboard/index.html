@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — which pre-token protocol is worth farming next</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Token Launch Radar</h1>
+    <p class="sub">Which protocol with no token on record is worth farming next — ranked by implied launch value, each with a concrete farm plan.</p>
+  </div>
+  <div class="meta" id="meta">Loading snapshot data…</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-view="board" class="on">Board</button>
+  <button data-view="live">Live-token comparison</button>
+  <button data-view="excluded">Excluded</button>
+  <button data-view="method">Method &amp; model</button>
+</nav>
+
+<section id="view-board" class="view">
+  <div class="controls">
+    <input id="q" type="search" placeholder="Search name or slug…" aria-label="Search">
+    <select id="cat" aria-label="Category"><option value="">All categories</option></select>
+    <select id="chain" aria-label="Chain"><option value="">All chains</option></select>
+    <label class="chk"><input id="watchOnly" type="checkbox"> Watchlist only</label>
+    <label class="chk"><input id="earlyOnly" type="checkbox"> Early only (below floor)</label>
+    <label class="slider">Min TVL $<span id="tvlLabel">0</span>
+      <input id="tvlMin" type="range" min="0" max="1000000000" step="10000000" value="0">
+    </label>
+  </div>
+  <p class="count" id="count"></p>
+  <div class="tablewrap">
+    <table id="board">
+      <thead><tr>
+        <th data-sort="rank">Rank</th>
+        <th data-sort="name">Protocol</th>
+        <th data-sort="category">Category</th>
+        <th data-sort="chains">Chains</th>
+        <th data-sort="tvlUsd">TVL</th>
+        <th data-sort="change7d">7d</th>
+        <th data-sort="ageDays">Age</th>
+        <th data-sort="implied">Implied value</th>
+        <th data-sort="multiple">Multiple</th>
+        <th>Status</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="hint">Click a row for its detail view: every model component, the farm plan and the record note.</p>
+</section>
+
+<section id="view-live" class="view hidden">
+  <h2>Live-token comparison</h2>
+  <p>These protocols already have a token trading. They are <strong>not</strong> launch candidates — they are here so a reader can compare a launch claim against real market values. Market value, not implied value, is the headline number.</p>
+  <div class="tablewrap"><table id="liveTable">
+    <thead><tr><th>Protocol</th><th>Category</th><th>TVL</th><th>Market cap</th><th>Mcap / TVL</th><th>7d</th></tr></thead>
+    <tbody id="liveRows"></tbody>
+  </table></div>
+</section>
+
+<section id="view-excluded" class="view hidden">
+  <h2>Excluded from the ranking</h2>
+  <p>Bridged, wrapped, staked or exchange products are not launch candidates, and neither are protocols the watchlist rule kept off. They are listed here with the reason, instead of silently vanishing.</p>
+  <div class="tablewrap"><table id="exTable">
+    <thead><tr><th>Protocol</th><th>Category</th><th>TVL</th><th>Why excluded</th></tr></thead>
+    <tbody id="exRows"></tbody>
+  </table></div>
+  <p class="count" id="exCount"></p>
+</section>
+
+<section id="view-method" class="view hidden">
+  <h2>Method &amp; model transparency</h2>
+  <p>Implied value = TVL × category multiple × growth factor × momentum tilt × maturity factor × chain factor.</p>
+  <ul>
+    <li><strong>Category multiple:</strong> winsorised median of market-cap / TVL among the live-token protocols of the same category. A category with fewer than 5 comps borrows the global median. Clamped to 0.05–1.0, so one comp or one outlier cannot dominate a ranking.</li>
+    <li><strong>Growth factor:</strong> the 7-day TVL change, clamped to −60% … +120%, turned into a multiplier. An extreme weekly move is capped, not obeyed.</li>
+    <li><strong>Momentum tilt:</strong> growth above the category's median growth earns a small bonus, below it a small penalty.</li>
+    <li><strong>Maturity factor:</strong> days from first listing to the snapshot date, capped at 1,095 days; an unknown listing date counts as 365 days.</li>
+    <li><strong>Chain factor:</strong> a small capped bonus for the number of chains a protocol runs on.</li>
+  </ul>
+  <p>Every protocol's detail view shows each component's number, so any row can be checked by hand. Ties break alphabetically by slug; all implied values are distinct.</p>
+  <h3>How to read the board</h3>
+  <p>Rank 1 is the most valuable launch claim. Rows marked <span class="badge pre">records no token</span> are the launch candidates; rows marked <span class="badge trading">token trades</span> sit at the bottom as a comparison tail and are never launch candidates. “Records no token” is the snapshot's record, not proof — a protocol may still have a token its DefiLlama record does not carry.</p>
+  <p class="fine">Implied value is this entry's own claim, not a promise that a token will launch. Snapshot 14 Nov 2026. A DefiLlama record is not proof.</p>
+</section>
+
+<section id="detail" class="detail hidden" aria-live="polite"></section>
+
+<footer>
+  <p>Token Launch Radar — snapshot 14 Nov 2026, floor $50,000,000. Implied value is this entry's claim, not a promise of a token launch; the snapshot's record is not proof a protocol has no token.</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
